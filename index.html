@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>每天 60 秒读懂世界</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            /* border: 1px solid #003aff; */
+        }
+
+        #content p {
+            width: 720px;
+            margin-top: 8px;
+            font-size: 1.2em;
+        }
+
+        #tip {
+            text-align: center;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="display: flex;justify-content: center;">
+        <div id="app">
+            <img id="image" alt="60s" width="720px" src="./assets/loading.gif" />
+            <div id="content"></div>
+        </div>
+    </div>
+    <script>
+        fetch('https://60s.viki.moe/60s?v2=1')
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error('网络响应错误')
+                }
+                return resp.json()
+            })
+            .then(data => data.data)
+            .then(data => {
+                const { news, tip, cover } = data
+                const img = document.getElementById('image')
+                if (cover) {
+                    img.setAttribute("src", cover)
+                } else {
+                    img.setAttribute("src", './assets/60s.png')
+                }
+                let content = ''
+                for (let i = 0; i < news.length; i++) {
+                    const text = news[i]
+                    content += `<p>${new String(i + 1).padStart(2, '0')}、${text}</p>`
+                }
+                content += `<p id="tip">【微语】${tip}</p>`
+                const contentDiv = document.getElementById('content')
+                contentDiv.innerHTML = content
+            })
+            .catch(error => {
+                console.log('获取数据时出错: ', error)
+            })
+
+    </script>
+</body>
+
+</html>
